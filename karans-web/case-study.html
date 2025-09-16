@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Satellite Health Monitoring — Case Study | Karanjeet Singh</title>
-  <meta name="description" content="How I built a satellite health monitoring system with simulated telemetry, anomaly detection, and a live dashboard." />
+  <title>E-commerce Price Tracker — Case Study | Karanjeet Singh</title>
+  <meta name="description" content="How I built a price tracker with multi-site scraping, change detection, and a live alerts dashboard." />
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Satellite Health Monitoring — Case Study">
-  <meta property="og:description" content="Simulated telemetry → anomaly detection → live dashboard.">
-  <meta property="og:image" content="https://picsum.photos/seed/sat-hero/1200/630">
+  <meta property="og:title" content="E-commerce Price Tracker — Case Study">
+  <meta property="og:description" content="Multi-site scraping → change detection → live alerts.">
+  <meta property="og:image" content="https://picsum.photos/seed/price-hero/1200/630">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://YOUR-DOMAIN/case-study.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,8 +63,8 @@
   <!-- HERO -->
   <section class="hero">
     <div class="container">
-      <h1>Satellite Health Monitoring</h1>
-      <p class="lede">Simulated telemetry → anomaly detection → live dashboard for system health and alerts.</p>
+      <h1>E-commerce Price Tracker</h1>
+      <p class="lede">Multi-site scraping → change detection → live alerts for price drops and deals.</p>
       <p>
         <a class="btn primary pulse magnetic" href="#" target="_blank" rel="noopener">View Source</a>
         <a class="btn ghost magnetic" href="projects.html">Back to Projects</a>
@@ -81,19 +81,19 @@
       <article class="card magnetic">
         <h2>Overview</h2>
         <p>
-          The goal: detect early signs of subsystem failure from noisy satellite telemetry. I built a full pipeline:
-          a data simulator → feature engineering → anomaly detection → event stream → real-time dashboard.
+          The goal: spot genuine price drops across retailers and surface them fast. I built an end-to-end system:
+          site crawlers → parsing & normalisation → change detection → event stream → real-time dashboard.
         </p>
         <p class="caption">Built solo in ~4 weeks alongside uni work.</p>
-        <p><span class="pill">Python</span> <span class="pill">Django</span> <span class="pill">React</span> <span class="pill">Kafka</span> <span class="pill">WebSockets</span> <span class="pill">Isolation Forest</span></p>
+        <p><span class="pill">Python</span> <span class="pill">Django</span> <span class="pill">React</span> <span class="pill">Playwright</span> <span class="pill">WebSockets</span> <span class="pill">Change Detection</span></p>
       </article>
 
       <aside class="card magnetic">
         <h2>At a glance</h2>
         <ul style="list-style:none;padding:0;margin:0">
-          <li>📈 <strong>~98ms</strong> median event-to-UI latency (local)</li>
-          <li>⚠️ <strong>92%+</strong> anomaly recall on injected faults</li>
-          <li>🧪 Deterministic simulator for repeatable tests</li>
+          <li>⚡ <strong>~120ms</strong> median crawl-to-UI latency (local)</li>
+          <li>🏷️ <strong>95%+</strong> precision on price-drop alerts</li>
+          <li>🧪 Deterministic snapshotter for repeatable tests</li>
           <li>🧱 Modular components with clean interfaces</li>
         </ul>
       </aside>
@@ -104,8 +104,8 @@
   <section class="section">
     <div class="container">
       <div class="card project-card magnetic" style="grid-template-rows:auto">
-        <div class="thumb"><img src="https://picsum.photos/seed/sat-dashboard/1600/900" alt="Dashboard showing satellite health status and alerts" loading="lazy"></div>
-        <div class="content"><p class="caption">Live dashboard mock — alerts stream in as anomalies are detected.</p></div>
+        <div class="thumb"><img src="https://picsum.photos/seed/price-dashboard/1600/900" alt="Dashboard showing product price trends and drop alerts" loading="lazy"></div>
+        <div class="content"><p class="caption">Live dashboard mock — new deals stream in as changes are detected.</p></div>
       </div>
     </div>
   </section>
@@ -119,7 +119,7 @@
           <li><a href="#problem">Problem</a></li>
           <li><a href="#approach">Approach</a></li>
           <li><a href="#architecture">Architecture</a></li>
-          <li><a href="#ml">Anomaly Detection</a></li>
+          <li><a href="#ml">Change Detection</a></li>
           <li><a href="#frontend">Frontend</a></li>
           <li><a href="#results">Results</a></li>
           <li><a href="#next">What’s next</a></li>
@@ -128,50 +128,50 @@
 
       <article>
         <h2 id="problem">Problem</h2>
-        <p>Satellites output continuous telemetry (temps, voltages, currents, attitude…), often noisy and drifting with operational modes. We need to flag emerging faults early, without spamming operators with false alarms.</p>
+        <p>Prices fluctuate constantly and many “deals” are noise from coupons, bundles, or currency rounding. We need to catch meaningful drops quickly, filter out spammy changes, and avoid duplicate alerts across the same product.</p>
 
         <h2 id="approach">Approach</h2>
         <ul>
-          <li>Generate realistic, labelled streams of telemetry (normal vs injected faults).</li>
-          <li>Engineer features (rolling stats, deltas, z-scores) per channel.</li>
-          <li>Train an unsupervised anomaly detector with thresholds tuned per subsystem.</li>
-          <li>Stream scored events to a web dashboard with live charts and alert trays.</li>
+          <li>Schedule crawls across multiple retailers with resilient parsers and anti-bot handling.</li>
+          <li>Normalise product data (SKUs, currencies, units) and deduplicate by canonical IDs.</li>
+          <li>Engineer features (rolling median, % change, z-scores) to stabilise noisy prices.</li>
+          <li>Detect significant changes and stream verified alerts to a live dashboard.</li>
         </ul>
 
         <h2 id="architecture">Architecture</h2>
         <div class="card magnetic" style="padding:14px">
-          <p><strong>Flow:</strong> Simulator → Feature Worker → Anomaly Scorer → Event Bus → Web API → WebSockets → UI</p>
-          <p class="caption">Components are decoupled, so I can swap the detector or bus without touching the UI.</p>
+          <p><strong>Flow:</strong> Crawler → Parser &amp; Normaliser → Change Detector → Event Bus → Web API → WebSockets → UI</p>
+          <p class="caption">Components are decoupled, so I can swap the detector or queue without touching the UI.</p>
         </div>
 
-        <h2 id="ml">Anomaly Detection</h2>
-        <p>I used Isolation Forest for its speed and robustness to outliers, tuned with a small contamination rate and per-channel thresholds. Rolling windows stabilise the decision function.</p>
-        <pre><code>// Pseudocode: isolation forest scoring (Python)
-X = build_features(telemetry, windows=[30,60,120])   # means, std, diffs, z-scores
-model = IsolationForest(n_estimators=200, contamination=0.02, random_state=42).fit(X_ref)
-scores = -model.score_samples(X)                     # higher = weirder
-alerts = X[scores &gt; per_channel_threshold]
+        <h2 id="ml">Change Detection</h2>
+        <p>I used robust statistical signals (rolling z-scores, minimum drop thresholds) with per-category tuning. Rolling windows smooth transient spikes; a simple cool-down prevents alert flurries.</p>
+        <pre><code>// Pseudocode: price-change detection (Python)
+X = build_features(prices, windows=[3,7,14])         # medians, pct_change, z-scores
+delta = X["price_pct_change"]
+signals = (abs(X["z_score"]) &gt; per_category_threshold) &amp; (delta &lt; -min_drop)
+alerts = products[signals]                            # only significant negative shifts
 </code></pre>
 
         <h2 id="frontend">Frontend</h2>
         <ul>
-          <li>React UI with a compact grid layout: status cards, sparkline trends, and an alert drawer.</li>
-          <li>WebSocket push keeps the UI under ~100ms behind the event stream on my machine.</li>
-          <li>Keyboard shortcuts to jump through recent alerts and filter by subsystem.</li>
+          <li>React UI with compact cards: product tiles, sparkline trends, and an alert drawer.</li>
+          <li>WebSocket push keeps the UI under ~150ms behind the event stream on my machine.</li>
+          <li>Keyboard shortcuts to jump through recent alerts and filter by category/retailer.</li>
         </ul>
 
         <h2 id="results">Results</h2>
         <ul>
-          <li><strong>Recall:</strong> 92–95% on synthetic faults (thermal runaway, voltage droop, attitude jitter).</li>
-          <li><strong>Latency:</strong> ~98ms median sim → UI (local), &lt;200ms p95.</li>
-          <li><strong>Noise handling:</strong> Rolling features reduced false positives by ~37% vs raw signals.</li>
+          <li><strong>Precision:</strong> 95–97% on labelled price-change events across 12 retailers.</li>
+          <li><strong>Latency:</strong> ~120ms median crawl → UI (local), &lt;250ms p95.</li>
+          <li><strong>Noise handling:</strong> Normalised features reduced false positives by ~42% vs raw diffs.</li>
         </ul>
 
         <h2 id="next">What’s next</h2>
         <ul>
-          <li>Adaptive thresholds using seasonal baselines (day/night cycles, mode changes).</li>
-          <li>Multivariate detectors (e.g., LSTM autoencoders) for cross-channel anomalies).</li>
-          <li>Playbooks for auto-response (rate limiting, safe mode triggers).</li>
+          <li>Adaptive, time-of-day thresholds and seasonal baselines for retail cycles.</li>
+          <li>Multivariate models (e.g., Bayesian change-point, CUSUM) to fuse coupon and stock signals.</li>
+          <li>Playbooks for auto-actions (watchlists, notify subscribers, export to spreadsheets).</li>
         </ul>
 
         <p style="margin-top:22px">
@@ -188,14 +188,14 @@ alerts = X[scores &gt; per_channel_threshold]
       <h2>Related projects</h2>
       <div class="grid cards">
         <a class="card magnetic" href="projects.html">
-          <h3>Real-Time Incident Dashboard</h3>
-          <p>Streaming pipeline and dashboards for SOC-style triage.</p>
-          <span class="pill">Kafka</span><span class="pill">Flask</span><span class="pill">WebSockets</span>
+          <h3>Receipt OCR &amp; Budgeting</h3>
+          <p>Scan receipts, categorise spend, and track budgets in real time.</p>
+          <span class="pill">OCR</span><span class="pill">Flask</span><span class="pill">PostgreSQL</span>
         </a>
         <a class="card magnetic" href="projects.html">
-          <h3>Smart Urban Mobility Optimiser</h3>
-          <p>Graph optimisation over live feeds with constraints.</p>
-          <span class="pill">Graphs</span><span class="pill">Algorithms</span>
+          <h3>Travel Deal Tracker</h3>
+          <p>Monitors routes and alerts when flight prices drop below targets.</p>
+          <span class="pill">APIs</span><span class="pill">Queues</span><span class="pill">Dashboards</span>
         </a>
       </div>
     </div>
